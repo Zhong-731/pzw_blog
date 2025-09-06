@@ -1,0 +1,156 @@
+# Django 项目 .gitignore
+
+# ********************************
+# 第一部分：Python 特定规则
+# ********************************
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Python 虚拟环境 (必须忽略！)
+venv/
+env/
+.venv/
+ENV/
+
+# 包安装目录 (例如使用 `pip install -t lib/`)
+lib/
+lib64/
+
+# 安装包的分发和打包
+dist/
+build/
+*.egg-info/
+*.egg
+
+# PyInstaller 输出
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# ********************************
+# 第二部分：Django 特定规则
+# ********************************
+
+# 本地开发服务器数据库（SQLite）
+*.sqlite3
+*.db
+
+# 媒体文件（用户上传的文件）
+media/
+!media/.gitkeep  # 如果需要保留空目录，取消注释这行
+
+# 静态文件收集目录（通常由 collectstatic 生成）
+staticfiles/
+
+# Django 密钥和本地设置（重要！必须忽略）
+/local_settings.py
+/.env
+/.env.local
+
+# ********************************
+# 第三部分：操作系统文件
+# ********************************
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+
+# ********************************
+# 第四部分：IDE 和编辑器文件
+# ********************************
+
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# PyCharm/IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.project
+.pydevproject
+.settings/
+.classpath
+
+# Sublime Text
+*.sublime-*
+sublime-text-*
+
+# Vim
+*.swp
+*.swo
+*~
+
+# ********************************
+# 第五部分：日志文件和临时文件
+# ********************************
+
+# 日志文件
+*.log
+logs/
+
+# 缓存文件
+.cache
+
+# 临时文件
+tmp/
+temp/
