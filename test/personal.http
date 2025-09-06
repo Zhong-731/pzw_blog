@@ -1,0 +1,29 @@
+### 测试增加个人主页信息
+POST http://localhost:8000/api/v1/personal/add/
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzU0NDA3NTkzLjQyMTgyNn0.CaJUEiLUldYxy7DE5cvoDHGCRcQ0rbXNewo1XUhDj6w
+
+{
+    "introduce" : "你好你好",
+    "age" : 21,
+    "birthday" : "2004-06-19",
+    "address" : "广东"
+}
+
+### 测试修改个人主页信息
+PUT http://localhost:8000/api/v1/personal/update/
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzU0NDA3NTkzLjQyMTgyNn0.CaJUEiLUldYxy7DE5cvoDHGCRcQ0rbXNewo1XUhDj6w
+
+{
+    "nick_name": "项目开发者-pzw3",
+    "introduce" : "你好你好你好",
+    "age" : 21,
+    "birthday" : "2005-06-19",
+    "address" : "广东"
+}
+
+### 测试获取个人主页信息详情
+GET http://localhost:8000/api/v1/personal/detail/
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzU0NDA3NTkzLjQyMTgyNn0.CaJUEiLUldYxy7DE5cvoDHGCRcQ0rbXNewo1XUhDj6w

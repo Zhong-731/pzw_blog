@@ -1,0 +1,50 @@
+### 测试用户注册功能
+POST http://localhost:8000/api/v1/user/register/
+Content-Type: application/json
+
+{
+    "username" : "pzw2", 
+    "password" : "123456",
+    "nick_name" : "项目开发者-pzw2",
+    "phone" : 16888888888,
+    "email" : "168@qq.com"
+}
+
+
+### 测试用户登录功能
+POST http://localhost:8000/api/v1/user/login/
+Content-Type: application/json
+
+{
+    "username" : "pzw2",
+    "password" : "123456"
+}
+
+
+### 测试用户修改密码功能
+PUT http://localhost:8000/api/v1/user/password_change/
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE0NzU4NDE4MDcwIiwiZXhwIjoxNzUzMDc0NjM3Ljg4NzAyMTN9.zgmB809ao5FJqIgTfMJ9vxRBXtdzL1Vte5Q9ryb2r3Q
+
+{
+    "old_password" : "123456",
+    "new_password1" : "1234567",
+    "new_password2" : "1234567"
+}
+
+
+### 测试获取用户列表
+GET http://localhost:8000/api/v1/user/user_list/
+
+
+### 测试获取单个用户详情
+GET http://localhost:8000/api/v1/user/user_detail/1
+
+
+### 测试用户找回密码功能 (未开发)
+POST http://localhost:8000/api/v1/user/password_reset/
+Content-Type: application/json
+
+{
+    "" 
+}

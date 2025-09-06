@@ -1,0 +1,27 @@
+'''
+   文章点赞模型功能测试
+'''
+
+### 测试文章点赞增加
+POST http://localhost:8000/api/v1/like/like_article/add/1/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzU0MTA4NzQyLjYzNjE4NTR9.kljhfzoILl6mNOA6YW4D1ccyUULqzuBgsNxa6JtnC9c
+
+### 测试文章点赞取消
+DELETE http://localhost:8000/api/v1/like/like_article/delete/1/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzU0MTA4NzQyLjYzNjE4NTR9.kljhfzoILl6mNOA6YW4D1ccyUULqzuBgsNxa6JtnC9c
+
+### 测试获取文章点赞列表
+GET http://localhost:8000/api/v1/like/like_article/list/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzU0MTA4NzQyLjYzNjE4NTR9.kljhfzoILl6mNOA6YW4D1ccyUULqzuBgsNxa6JtnC9c
+
+'''
+   评论点赞模型功能测试
+'''
+
+### 测试评论点赞增加
+POST http://localhost:8000/api/v1/like/like_comment/add/1/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzU0MTA4NzQyLjYzNjE4NTR9.kljhfzoILl6mNOA6YW4D1ccyUULqzuBgsNxa6JtnC9c
+
+### 测试文章点赞取消
+DELETE http://localhost:8000/api/v1/like/like_comment/delete/1/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzU0MTA4NzQyLjYzNjE4NTR9.kljhfzoILl6mNOA6YW4D1ccyUULqzuBgsNxa6JtnC9c

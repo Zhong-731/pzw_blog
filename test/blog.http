@@ -1,0 +1,50 @@
+### 测试个人发布文章
+POST http://localhost:8000/api/v1/blog/article/create/
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzUzMzcxMjI2LjQ5MDMyMDd9.HxsGBlTtRKMcQkGcPG-Ntzr5rovPbBCCDcSp0Qpm-zM
+
+{
+    "title": "测试发布文章22",
+    "content": "测试发布文章22",
+    "status": 1,
+    "type" : 1,
+    "is_featured": true,
+    "tags": [1,2,3,4],
+    "category" : 1
+}
+
+### 测试个人修改文章 (推荐文章功能、更新文章内容功能、更新分类功能、更新标签功能、更新作者功能）（未开发）
+PUT http://localhost:8000/api/v1/blog/article/update
+Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE0NzU4NDE4MDcwIiwiZXhwIjoxNzUzMDc0NjM3Ljg4NzAyMTN9.zgmB809ao5FJqIgTfMJ9vxRBXtdzL1Vte5Q9ryb2r3Q
+
+{
+    "id": 1,
+    "title": "测试修改文章1",
+    "content": "测试修改文章1",
+    "is_featured": true,
+    "tags": [1,2],
+    "category" : 1,
+}
+
+
+### 测试个人删除文章
+DELETE http://localhost:8000/api/v1/blog/article/delete/2/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE0NzU4NDE4MDcwIiwiZXhwIjoxNzUzMjA2MTg0LjEwMTc5MTR9.eujhigNL32zYnvqzLTVwJhLQ7O0BCBKBvdVSu3-cM5w
+
+
+### 测试获取个人文章列表 （模糊查询、分页功能）
+GET http://localhost:8000/api/v1/blog/article/list/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzUzMzcxMjI2LjQ5MDMyMDd9.HxsGBlTtRKMcQkGcPG-Ntzr5rovPbBCCDcSp0Qpm-zM
+
+
+### 测试获取个人文章详情
+GET http://localhost:8000/api/v1/blog/article/detail/1/
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwaG9uZSI6IjE2ODg4ODg4ODg4IiwiZXhwIjoxNzUzMzcxMjI2LjQ5MDMyMDd9.HxsGBlTtRKMcQkGcPG-Ntzr5rovPbBCCDcSp0Qpm-zM
+
+
+### 测试获取所有文章列表 (模糊查询功能、分页功能)
+GET http://localhost:8000/api/v1/blog/article/all_list/
+
+
+### 测试获取文章点赞数量 （未开发）
