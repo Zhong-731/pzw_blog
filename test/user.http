@@ -1,23 +1,51 @@
-### 测试用户注册功能
-POST http://localhost:8000/api/v1/user/register/
+### 测试短信发送功能
+POST http://localhost:8000/api/v1/user/sms_code/
 Content-Type: application/json
 
 {
-    "username" : "pzw2", 
-    "password" : "123456",
-    "nick_name" : "项目开发者-pzw2",
-    "phone" : 16888888888,
-    "email" : "168@qq.com"
+    "phone": "14758418071"
+}
+
+### 测试用户注册功能v1.0
+# POST http://localhost:8000/api/v1/user/register/
+# Content-Type: application/json
+
+# {
+#     "username" : "pzw2", 
+#     "password" : "123456",
+#     "nick_name" : "项目开发者-pzw2",
+#     "phone" : 16888888888,
+#     "email" : "168@qq.com"
+# }
+
+### 测试用户注册功能v1.1 —— 改为手机号第三方注册(阿里云短信验证码)
+POST http://localhost:8000/api/v1/user/phone_register/
+Content-Type: application/json
+
+{
+    "phone": "14758418071",
+    "password": "123456",
+    "sms_code": "537087"
 }
 
 
 ### 测试用户登录功能
-POST http://localhost:8000/api/v1/user/login/
+# POST http://localhost:8000/api/v1/user/login/
+# Content-Type: application/json
+
+# {
+#     "phone" : "pzw2",
+#     "password" : "123456"
+# }
+
+### 测试用户登录功能v1.1
+POST http://localhost:8000/api/v1/user/phone_login/
 Content-Type: application/json
 
 {
-    "username" : "pzw2",
-    "password" : "123456"
+    "phone" : "14758418071",
+    "password" : "123456",
+    "sms_code": "256639"
 }
 
 

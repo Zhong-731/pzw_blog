@@ -28,6 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Google Client ID
+GOOGLE_CLIENT_ID = '469458314541-jr05khk7k7a9cfqu7doltini6hben157.apps.googleusercontent.com'
 
 # Application definition
 
@@ -38,6 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',      # 用于处理跨域
+    'allauth',          # 用于第三方登录
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google', # Google第三方登录
+    'allauth.socialaccount.providers.apple',  # Apple第三方登录 
     'rest_framework',   # rest_framework框架
     'tinymce',          # 富文本编辑器
     'user_app',         # 用户模块
@@ -49,15 +57,40 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # 跨域处理的中间件          # <-- 必须在 CommonMiddleware 之前（推荐放最前）
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'user_app.middleware.LoginRequireMiddleWare', # 自定义验证登录的中间件
 ]
+
+# 开发环境简易配置（允许所有 origin，便于本地调试）
+CORS_ALLOW_ALL_ORIGINS = True
+
+# 允许前端携带凭证（如需要）
+CORS_ALLOW_CREDENTIALS = True
+
+# 允许前端 origin（开发时）
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",   # Vite 默认端口示例
+]
+
+# 允许额外的请求头（如果你发送 Authorization 等）
+from corsheaders.defaults import default_headers
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'authorization',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 
 ROOT_URLCONF = 'django_blog.urls'
 
@@ -154,3 +187,29 @@ TINYMCE_DEFAULT_CONFIG = {
     'menubar': False,
     'statusbar': True,
 }
+
+# OAuth2 配置
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'APP': {
+            'client_id': 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+            'secret': 'YOUR_GOOGLE_CLIENT_SECRET',
+            'key': '',
+        }
+    },
+    'apple': {
+        'APP': {
+            'client_id': 'your_service_id',
+            'secret': 'your_private_key_content',
+            'key_id': 'your_key_id',
+            'team_id': 'your_team_id',
+            'scope': ['name', 'email'],
+        }
+    }
+}
+
+SITE_ID = 1  # 必须设置
+
+

@@ -1,73 +1,189 @@
-from django.urls import reverse
+from django.core.cache import cache
+from django.conf import settings
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView 
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from google.oauth2 import id_token as google_id_token
+from google.auth.transport import requests as grequests
 
 from user_app.models import User
 from user_app.token import generate_token,verify_token
-from .serializers import RegisterSerializer, UserListSerializer, UserDatailSerializer 
+from .serializers import PhoneRegisterSerializer, UserListSerializer, UserDatailSerializer 
+
+import random
 
 # Create your views here.
-class RegisterView(APIView):
-    def post(self,request):
-        '''
-            注册功能
-        '''
-        # 反序列化
-        serializer = RegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            # 保存
-            serializer.save()
+class SendSMSView(APIView):
+    """
+    发送短信验证码——（手机号注册、登录）
+    """
+    def post(self, request):
+        phone = request.data.get("phone")
+
+        if not phone:
+            return Response({"code": 400, "msg": "手机号或密码不能为空"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 生成6位随机验证码
+        code = "".join([str(random.randint(0, 9)) for _ in range(6)])
+        
+        # # 调用阿里云短信接口
+        # client = AcsClient(settings.ALIYUN_SMS["ACCESS_KEY_ID"], settings.ALIYUN_SMS["ACCESS_KEY_SECRET"], "default")
+        # sms_request = SendSmsRequest.SendSmsRequest()
+        # sms_request.set_SignName(settings.ALIYUN_SMS["SIGN_NAME"])
+        # sms_request.set_TemplateCode(settings.ALIYUN_SMS["TEMPLATE_CODE"])
+        # sms_request.set_PhoneNumbers(phone)
+        # sms_request.set_TemplateParam("{\"code\":\"" + code + "\"}")  # 模板变量
+ 
+        try:
+            # response = client.do_action_with_exception(sms_request)
+            # 存储验证码到缓存（5分钟有效期）
+            cache.set(f"sms_code_{phone}", code, 300)  # key格式：sms_code_<手机号>
             return Response({
-                "code" : status.HTTP_201_CREATED,
-                'msg' : '用户注册成功'
+                "code": 200,
+                "msg": "短信发送成功",
+                "sms_code": code
+                })
+        except Exception as e:
+            return Response({"code": 500, "msg": f"短信发送失败: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class PhoneRegisterView(APIView):
+    '''
+        手机号注册视图（带短信验证码验证）
+    '''
+    def post(self,request):
+        # 反序列化
+        serializer = PhoneRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            # 注册成功后删除缓存的验证码（防止重复使用）
+            phone = serializer.validated_data["phone"]
+            cache.delete(f"sms_code_{phone}")
+            return Response({
+                "code": status.HTTP_201_CREATED,
+                'msg': '用户注册成功'
             })
         else:
             return Response({
-                "code" : status.HTTP_400_BAD_REQUEST,
-                'msg' : serializer.errors
+                "code": status.HTTP_400_BAD_REQUEST,
+                'msg': serializer.errors
             })
 
 
-class LoginView(APIView):
-    def post(self,request):
-        '''
-            登录功能
-        '''
+class PhoneLoginView(APIView):
+    '''
+        手机号登录视图
+    '''
+    def post(self, request):
         # 接收参数
-        username = request.data.get('username')
+        phone = request.data.get('phone')
+        password = request.data.get('password')
+        sms_code = request.data.get('sms_code')
+        # 非空判断
+        if sms_code != cache.get(f"sms_code_{phone}"):
+            return Response({
+                "code": status.HTTP_400_BAD_REQUEST,
+                "msg": "验证码错误"
+            })
+        
+        # 非空判断
+        if not phone or not password:
+            return Response({
+                "code": status.HTTP_400_BAD_REQUEST,
+                "msg": "手机号和密码不能为空"
+            })
 
          # 验证参数
         try:
-            user = User.objects.get(username=username)
-        except Exception as e:
+            user = User.objects.get(phone=phone)
+        except User.DoesNotExist:
             return Response({
-                "code" : status.HTTP_404_NOT_FOUND,
-                "msg" : "用户不存在" 
+                "code": status.HTTP_404_NOT_FOUND,
+                "msg": "用户不存在" 
             })
-        
-        try:
-            password = request.data.get('password')
-        except Exception as e:
-            return Response({
-                "code" : status.HTTP_404_NOT_FOUND,
-                "msg" : "密码不能为空" 
-            })
-        
+             
         if user.check_password(password):
             token = generate_token({'phone': user.phone})
             return Response({
-                "code" : status.HTTP_200_OK,
-                "msg" : "登录成功！",
-                "token" : token  
+                "code": status.HTTP_200_OK,
+                "msg": "登录成功！",
+                "token": token  
             })
         else:
             return Response({
-                'code' : status.HTTP_400_BAD_REQUEST,
-                'msg' : '密码错误'
+                'code': status.HTTP_400_BAD_REQUEST,
+                'msg': '密码错误'
             })
+
+class GoogleLoginView(APIView):
+    '''
+        Google 登录视图
+    '''
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        id_token = request.data.get('id_token')
+        if not id_token:
+            return Response({
+                'code': status.HTTP_400_BAD_REQUEST,
+                'msg': 'id_token为空'
+            })
+
+        try:
+            # 验证 id_token（会验证签名、过期等）
+            id_info = google_id_token.verify_oauth2_token(
+                id_token, grequests.Request(), settings.GOOGLE_CLIENT_ID
+            )
+        except Exception as e:
+            return Response({
+                'code': status.HTTP_400_BAD_REQUEST,
+                'msg': 'id_token无效',
+                'error': str(e)
+                })
+
+        # 可额外校验 issuer / aud 等
+        if id_info.get('aud') != settings.GOOGLE_CLIENT_ID:
+            return Response({
+                'code': status.HTTP_400_BAD_REQUEST,
+                'msg': 'audience 无效'
+                })
+
+        email = id_info.get('email')
+        sub = id_info.get('sub')  # Google 用户唯一 id
+        name = id_info.get('name')
+        picture = id_info.get('picture')
+
+        # 使用 email 查找用户（根据项目需要调整）
+        user, created = User.objects.get_or_create(
+            email=email,
+            defaults={'username': email.split('@')[0] or sub}
+        )
+
+        if created:
+            # 不设置可登录密码，除非你想允许密码登录
+            user.set_unusable_password()
+            user.save()
+            # 如果有用户 profile 存 social id，可写入 sub 等信息
+
+        # 生成 JWT（access + refresh）
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'user': {
+                'id': user.id,
+                'email': user.email,
+                'username': user.username,
+                'name': name,
+                'picture': picture
+            }
+        })
+    
 
 
 class PasswordChangeView(APIView):
